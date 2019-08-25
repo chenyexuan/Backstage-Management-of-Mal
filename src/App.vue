@@ -5,7 +5,9 @@
 </template>
 
 <script>
+// import router from '@/router/router'
 export default {
+
   name: 'app'
 
 }
