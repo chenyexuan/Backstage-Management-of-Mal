@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+import { login } from '@/api/login_index'
 export default {
   data () {
     return {
@@ -31,7 +32,7 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -40,7 +41,22 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!')
+          // alert('submit!')
+          // console.log(this.ruleForm)
+          login(this.ruleForm)
+            .then(res => {
+              // console.log(res)
+              if (res.data.meta.status === 200) {
+                localStorage.setItem('login_key_chenyexuan', res.data.data.token)
+                this.$router.push({ name: 'home' })
+                this.$message.success(res.data.meta.msg)
+              } else {
+                this.$message.warning(res.data.meta.msg)
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
         } else {
           console.log('error submit!!')
           return false
