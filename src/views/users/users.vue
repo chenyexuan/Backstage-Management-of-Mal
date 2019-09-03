@@ -7,11 +7,11 @@
     </el-breadcrumb>
     <el-input
       placeholder="请搜索输入内容"
-      v-model="userForm.query"
+      v-model="data.query"
       class="input-with-select"
       style="width:300px"
     >
-      <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-button slot="append" icon="el-icon-search" @click="initByQuery"></el-button>
     </el-input>
     <el-button type="success" style="margin:20px" @click="showAddUser">添加用户</el-button>
     <el-table :data="userForm"  border style="width: 100%">
@@ -70,13 +70,36 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser(addRuleForm)">确 定</el-button>
+        <el-button type="primary" @click="addUser()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑角色" :visible.sync="editDialogFormVisible" label-width="100px">
+      <el-form
+        :model="editForm"
+        :rules="editRules"
+        ref="editRuleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="用户名" prop="username" >
+          <el-input v-model="editForm.username" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="editForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="mobile">
+          <el-input v-model="editForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getAllUserList, addUser } from '@/api/users/users'
+import { getAllUserList, addUser, getUserById, editUser } from '@/api/users/users'
 // import { getDiffieHellman } from 'crypto'
 export default {
   data () {
@@ -86,6 +109,18 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      editForm: {},
+      editRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入电话', trigger: 'blur' }
+        ]
       },
       addRules: {
         username: [
@@ -101,6 +136,7 @@ export default {
           { required: true, message: '请输入电话', trigger: 'blur' }
         ]
       },
+      editDialogFormVisible: false,
       addDialogFormVisible: false,
       usersTotal: 1,
       data: {
@@ -115,6 +151,32 @@ export default {
     this.init()
   },
   methods: {
+    async editUser () {
+      let res = await editUser(this.editForm)
+      // console.log(res)
+      if (res.data.meta.status === 200) {
+        this.$message.success(res.data.meta.msg)
+        this.editDialogFormVisible = false
+      } else {
+        this.$message.warning(res.data.meta.msg + ',请联系技术人员')
+      }
+    },
+    async edit (row) {
+      // console.log(row)
+      let userId = row.id
+      let res = await getUserById(userId)
+      console.log(res)
+      if (res.data.meta.status === 200) {
+        this.editDialogFormVisible = true
+        this.editForm = res.data.data
+      } else {
+        this.$message.warning(res.data.meta.msg + ',请联系技术人员')
+      }
+    },
+    initByQuery () {
+      // console.log(123)
+      this.init()
+    },
     async init () {
       let res = await getAllUserList(this.data)
       if (res.data.meta.status === 200) {
@@ -136,7 +198,7 @@ export default {
     showAddUser () {
       this.addDialogFormVisible = true
     },
-    async addUser (addRuleForm) {
+    async addUser () {
       let res = await addUser(this.addForm)
       console.log(res)
       if (res.data.meta.status === 201) {

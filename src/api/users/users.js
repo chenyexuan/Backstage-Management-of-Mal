@@ -12,3 +12,15 @@ export const addUser = data => {
     method: 'post'
   })
 }
+export const getUserById = id => {
+  return axios({
+    url: `users/${id}`
+  })
+}
+export const editUser = data => {
+  return axios({
+    url: `users/${data.id}`,
+    method: 'put',
+    data
+  })
+}
