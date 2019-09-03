@@ -30,3 +30,16 @@ export const deleteUserById = id => {
     method: 'delete'
   })
 }
+export const grantUserRole = (id, rid) => {
+  return axios({
+    url: `users/${id}/role`,
+    method: 'put',
+    data: { rid }
+  })
+}
+export const editUserStatus = (id, type) => {
+  return axios({
+    url: `users/${id}/state/${type}`,
+    method: 'put'
+  })
+}
