@@ -19,14 +19,21 @@
                 <span>{{item.authName}}</span>
               </template>
               <el-menu-item-group v-for="second in item.children" :key="second.id">
-                <el-menu-item :index="'/home/'+second.path">{{second.authName}}</el-menu-item>
+                <el-menu-item :index="'/home/'+second.path">
+                  <i class="el-icon-location"></i>
+                  {{second.authName}}
+                </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </el-row>
       </el-aside>
       <el-container>
-        <el-header class="el-header">Header</el-header>
+        <el-header class="el-header">
+          <el-button class="toggle-btn"><i class="myicon-menu"></i></el-button>
+          <h1 class="system-title">电商后台管理系统</h1>
+          <a href="JavaScript:" class="leave">退出</a>
+        </el-header>
         <el-main>
           <router-view>welcome</router-view>
         </el-main>
@@ -44,7 +51,7 @@ export default {
   },
   async mounted () {
     let res = await getLeftMenu()
-    console.log(res)
+    // console.log(res)
     this.menuForm = res.data.data
   }
 }
@@ -72,15 +79,17 @@ export default {
     height: 60px;
     background: url(../assets/logo.png);
     background-size: cover;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, .3);
   }
   .toggle-btn {
     padding: 0 15px;
     margin-left: -20px;
     font-size: 36px;
-    color: white;
+    color: rgba(255, 255, 255, .7);
+    border:none;
     cursor: pointer;
     line-height: 60px;
+    background: rgba(0, 0, 0, .1);
     &:hover {
       background-color: #4292cf;
     }
@@ -89,8 +98,8 @@ export default {
     font-size: 28px;
     color: white;
   }
-  .welcome {
-    color: white;
+  .leave {
+    color: orange;
   }
 }
 </style>
