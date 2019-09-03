@@ -33,7 +33,7 @@
             <el-button type="success" icon="el-icon-loading"></el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="删除" placement="top">
-            <el-button type="warning" icon="el-icon-delete"></el-button>
+            <el-button type="warning" icon="el-icon-delete" @click="showDeleteUser(scope.row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -96,14 +96,22 @@
         <el-button type="primary" @click="editUser">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="删除角色" :visible.sync="deleteDialogFormVisible" label-width="100px">
+      <span>是否确定要删除该用户</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="deleteDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getAllUserList, addUser, getUserById, editUser } from '@/api/users/users'
+import { getAllUserList, addUser, getUserById, editUser, deleteUserById } from '@/api/users/users'
 // import { getDiffieHellman } from 'crypto'
 export default {
   data () {
     return {
+      deleUserId: 0,
       addForm: {
         username: '',
         password: '',
@@ -136,6 +144,7 @@ export default {
           { required: true, message: '请输入电话', trigger: 'blur' }
         ]
       },
+      deleteDialogFormVisible: false,
       editDialogFormVisible: false,
       addDialogFormVisible: false,
       usersTotal: 1,
@@ -151,6 +160,24 @@ export default {
     this.init()
   },
   methods: {
+    showDeleteUser (row) {
+      this.deleteDialogFormVisible = true
+      this.deleUserId = row.id
+    },
+    async deleteUser () {
+      let res = await deleteUserById(this.deleUserId)
+      // console.log(res)
+      if (res.data.meta.status === 200) {
+        this.$message.success(res.data.meta.msg)
+        this.deleteDialogFormVisible = false
+        if (this.userForm.length === 1) {
+          this.data.pagenum -= 1
+        }
+        this.init()
+      } else {
+        this.$message.warning(res.data.meta.msg + ',请联系技术人员')
+      }
+    },
     async editUser () {
       let res = await editUser(this.editForm)
       // console.log(res)

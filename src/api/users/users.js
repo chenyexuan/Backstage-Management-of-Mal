@@ -24,3 +24,9 @@ export const editUser = data => {
     data
   })
 }
+export const deleteUserById = id => {
+  return axios({
+    url: `users/${id}`,
+    method: 'delete'
+  })
+}
