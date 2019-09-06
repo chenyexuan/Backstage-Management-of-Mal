@@ -7,7 +7,7 @@
           <el-input v-model="ruleForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="ruleForm.password" placeholder="请输入密码"></el-input>
+          <el-input v-model="ruleForm.password" placeholder="请输入密码" type="password"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')" class="login-btn">登录</el-button>
